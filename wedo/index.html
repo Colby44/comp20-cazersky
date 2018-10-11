@@ -11,7 +11,7 @@
 <h1 id="title">We Do</h1>
 
 <video src="https://www.cs.tufts.edu/comp/20/wedo.mp4" id="wedo" controls></video>
-<p>Time (in seconds): <span id="timer"></span></p>
+<p><span id="timer"></span></p>
 
 <div id="lyrics"></div>
 
@@ -21,14 +21,49 @@
 	var timer = document.getElementById("timer");
 
 	video.addEventListener("timeupdate", function() {
-	timer.innerHTML = video.currentTime;
-		if (video.currentTime > 4 && video.currentTime < 5.5) {
+		if (video.currentTime > 4 && video.currentTime < 5.8) {
 			caption.innerHTML = "<lyrics>Who controls the British crown?</lyrics>";
 		}
-		else if (video.currentTime > 5.5 && video.currentTime < 8) {
+		else if (video.currentTime > 6 && video.currentTime < 8) {
 			caption.innerHTML = "<lyrics>Who keeps the metric system down?</lyrics>"
 		}
-
+		else if (video.currentTime > 8.2 && video.currentTime < 12) {
+			caption.innerHTML = "<lyrics>We do, we do!</lyrics>"
+		}
+		else if (video.currentTime > 12.5 && video.currentTime < 14.5) {
+			caption.innerHTML = "<lyrics>Who keeps Atlantis off the maps?</lyrics>"
+		}
+		else if (video.currentTime > 14.6 && video.currentTime < 16.5) {
+			caption.innerHTML = "<lyrics>Who keeps the Martians under wraps?</lyrics>"
+		}
+		else if (video.currentTime > 16.9 && video.currentTime < 20.5) {
+			caption.innerHTML = "<lyrics>We do, we do!</lyrics>"
+		}
+		else if (video.currentTime > 21 && video.currentTime < 24.7) {
+			caption.innerHTML = "<lyrics>Who holds back the electric car?</lyrics>"
+		}
+		else if (video.currentTime > 24.9 && video.currentTime < 29) {
+			caption.innerHTML = "<lyrics>Who makes Steve Guttenberg a star?</lyrics>"
+		}
+		else if (video.currentTime > 29.2 && video.currentTime < 33.6) {
+			caption.innerHTML = "<lyrics>We do, we do!</lyrics>"
+		}
+		else if (video.currentTime > 33.8 && video.currentTime < 35.6) {
+			caption.innerHTML = "<lyrics>Who robs cavefish of their sight?</lyrics>"
+		}
+		else if (video.currentTime > 35.7 && video.currentTime < 37.8) {
+			caption.innerHTML = "<lyrics>Who rigs every Oscar night?</lyrics>"
+		}
+		else if (video.currentTime > 38 && video.currentTime < 40.9) {
+			caption.innerHTML = "<lyrics>We do!</lyrics>"
+		}
+		else if (video.currentTime > 41.1 && video.currentTime < 45) {
+			caption.innerHTML = "<lyrics>We do!</lyrics>"
+		}
+		else {
+				caption.innerHTML = "";
+		}
+		}, false);
 </script>
 </body>
 </html>	
