@@ -11,10 +11,24 @@
 <h1 id="title">We Do</h1>
 
 <video src="https://www.cs.tufts.edu/comp/20/wedo.mp4" id="wedo" controls></video>
+<p>Time (in seconds): <span id="timer"></span></p>
+
 <div id="lyrics"></div>
 
 <script>
-	// Complete this section and create a CSS file named style.css
+	var video = document.getElementById("wedo");
+	var caption = document.getElementById("lyrics");
+	var timer = document.getElementById("timer");
+
+	video.addEventListener("timeupdate", function() {
+	timer.innerHTML = video.currentTime;
+		if (video.currentTime > 4 && video.currentTime < 5.5) {
+			caption.innerHTML = "<lyrics>Who controls the British crown?</lyrics>";
+		}
+		else if (video.currentTime > 5.5 && video.currentTime < 8) {
+			caption.innerHTML = "<lyrics>Who keeps the metric system down?</lyrics>"
+		}
+
 </script>
 </body>
 </html>	
