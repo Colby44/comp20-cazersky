@@ -10,34 +10,33 @@ var map;
 var marker;
 var infowindow = new google.maps.InfoWindow();
 var tStops = [
-  ['South Station', 42.352271, -71.05524200000001],  
-  ['Andrew', 42.330154 , -71.057655],
+  ['Alewife', 42.395428, -71.142483],
+  ['Davis', 42.39674, -71.121815],
   ['Porter Square', 42.3884, -71.11914899999999],
   ['Harvard Square', 42.373362, -71.118956],
-  ['JFK/UMass', 42.320685, -71.052391],
-  ['Salvin Hill', 42.31129, -71.053331],
-  ['Park Street', 42.35639457, -71.0624242],
-  ['Broadway', 42.342622, -71.056967],
-  ['Davis', 42.39674, -71.121815],
-  ['Alewife', 42.395428, -71.142483],
+  ['Central Square', 42.365486 , -71.103802],
   ['Kendall/MIT', 42.36249079, -71.08617653],
   ['Charles/MGH', 42.361166, -71.070628],
+  ['Park Street', 42.35639457, -71.0624242],
   ['Downtown Crossing', 42.355518, -71.060225],
-  ['Quincy Center', 42.251809, -71.005409 ],
+  ['South Station', 42.352271, -71.05524200000001],  
+  ['Broadway', 42.342622, -71.056967],
+  ['Andrew', 42.330154 , -71.057655],
+  ['JFK/UMass', 42.320685, -71.052391],
+  ['Salvin Hill', 42.31129, -71.053331],
+  ['Fields Corner', 42.300093, -71.061667],
   ['Ashmont', 42.284652, -71.06448899999999],
   ['Wollaston', 42.2665139, -71.0203369 ],
-  ['Fields Corner', 42.300093, -71.061667],
-  ['Central Square', 42.365486 , -71.103802],
+  ['Quincy Center', 42.251809, -71.005409 ],
   ['Braintree', 42.2078543, -71.0011385]
 ];
 var image = {
   url: 'https://pbs.twimg.com/profile_images/479253963217186816/gh7IsaeA_400x400.jpeg',
-  scaledSize: new google.maps.Size(30, 30)
+  scaledSize: new google.maps.Size(25, 25)
 };
 
 
 function init() {
-  console.log("aa");
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
     getMyLocation();
         // Update map and go there...
@@ -86,11 +85,13 @@ function renderMap() {
   });
 
   drawLine();
+  makeTStopTitles();
 }
 
-function drawLine() {  var tStopPath = [];
-  for (var i = 0; i < tStops.length; i++) {
-    var position =  {lat: tStop[i][1], lng: tStop[i][2]};
+function drawLine() {  
+  var tStopPath = [];
+  for (var i = 0; i < 16; i++) {
+    var position =  {lat: tStops[i][1], lng: tStops[i][2]};
     tStopPath.push(position);
   }
 
@@ -99,9 +100,28 @@ function drawLine() {  var tStopPath = [];
     geodesic: true,
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
-     strokeWeight: 2
+     strokeWeight: 5
   });
   flightPath.setMap(map);
+
+  var tStopPath2 = [];
+  position =  {lat: tStops[12][1], lng: tStops[12][2]};
+  tStopPath2.push(position);
+  position =  {lat: tStops[16][1], lng: tStops[16][2]};
+  tStopPath2.push(position);
+  position =  {lat: tStops[17][1], lng: tStops[17][2]};
+  tStopPath2.push(position);
+  position =  {lat: tStops[18][1], lng: tStops[18][2]};
+  tStopPath2.push(position);
+
+  flightPath2 = new google.maps.Polyline({
+    path: tStopPath2,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+     strokeWeight: 5
+  });
+  flightPath2.setMap(map);
 }
 
 function clickTitle(marker){
