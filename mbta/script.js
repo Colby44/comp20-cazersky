@@ -3,6 +3,7 @@ var myLng = 0;
 var closestStopLat = 0;
 var closestStopLng = 0;
 var myMarker = new google.maps.LatLng(myLat, myLng);
+var markerArray = [];
 var myOptions = {
   zoom: 13, // The larger the zoom number, the bigger the zoom
   center: {lat: 42.352271, lng: -71.05524200000001},
@@ -12,25 +13,25 @@ var map;
 var marker;
 var infowindow = new google.maps.InfoWindow();
 var tStops = [
-  ['Alewife', 42.395428, -71.142483],
-  ['Davis', 42.39674, -71.121815],
-  ['Porter Square', 42.3884, -71.11914899999999],
-  ['Harvard Square', 42.373362, -71.118956],
-  ['Central Square', 42.365486 , -71.103802],
-  ['Kendall/MIT', 42.36249079, -71.08617653],
-  ['Charles/MGH', 42.361166, -71.070628],
-  ['Park Street', 42.35639457, -71.0624242],
-  ['Downtown Crossing', 42.355518, -71.060225],
-  ['South Station', 42.352271, -71.05524200000001],  
-  ['Broadway', 42.342622, -71.056967],
-  ['Andrew', 42.330154 , -71.057655],
-  ['JFK/UMass', 42.320685, -71.052391],
-  ['Salvin Hill', 42.31129, -71.053331],
-  ['Fields Corner', 42.300093, -71.061667],
-  ['Ashmont', 42.284652, -71.06448899999999],
-  ['Wollaston', 42.2665139, -71.0203369 ],
-  ['Quincy Center', 42.251809, -71.005409 ],
-  ['Braintree', 42.2078543, -71.0011385]
+  ['Alewife', 42.395428, -71.142483, 'place-alfcl'],
+  ['Davis', 42.39674, -71.121815, 'place-davis'],
+  ['Porter Square', 42.3884, -71.11914899999999, 'place-portr'],
+  ['Harvard Square', 42.373362, -71.118956, 'place-harsq'],
+  ['Central Square', 42.365486 , -71.103802, 'place-cntsq'],
+  ['Kendall/MIT', 42.36249079, -71.08617653, 'place-knncl'],
+  ['Charles/MGH', 42.361166, -71.070628, 'place-chmnl'],
+  ['Park Street', 42.35639457, -71.0624242, 'place-pktrm'],
+  ['Downtown Crossing', 42.355518, -71.060225, 'place-dwnxg'],
+  ['South Station', 42.352271, -71.05524200000001, 'place-sstat'],  
+  ['Broadway', 42.342622, -71.056967, 'place-brdwy'],
+  ['Andrew', 42.330154 , -71.057655, 'place-andrw'],
+  ['JFK/UMass', 42.320685, -71.052391, 'place-jfk'],
+  ['Salvin Hill', 42.31129, -71.053331, 'place-shmnl'],
+  ['Fields Corner', 42.300093, -71.061667, 'place-fldcr'],
+  ['Ashmont', 42.284652, -71.06448899999999, 'place-asmnl'],
+  ['Wollaston', 42.2665139, -71.0203369, 'place-wlsta' ],
+  ['Quincy Center', 42.251809, -71.005409, 'place-qnctr' ],
+  ['Braintree', 42.2078543, -71.0011385, 'place-brntn']
 ];
 var image = {
   url: 'https://pbs.twimg.com/profile_images/479253963217186816/gh7IsaeA_400x400.jpeg',
@@ -39,6 +40,8 @@ var image = {
 
 function init() {
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  drawLine();
+  makeTStopTitles();
 
   if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -46,12 +49,14 @@ function init() {
       myLng = position.coords.longitude;
       me = new google.maps.LatLng(myLat, myLng);
       map.panTo(me);   
-      renderMap();
+      renderMapLocationBased();
+      getSchedule();
     },   function() { noGeoLocationError(true);
     });
   } else {
       noGeoLocationError(false);
   }
+
 }
 
 function noGeoLocationError(status){
@@ -60,9 +65,7 @@ function noGeoLocationError(status){
   }
 }
 
-function renderMap() {
-  drawLine();
-  makeTStopTitles();
+function renderMapLocationBased() {
   linetoNearestStop(findClosestStop());
 }
 
@@ -111,6 +114,7 @@ function clickTitle(marker){
     });
 }
 
+
 function makeTStopTitles(){
   for (var i = 0; i < tStops.length; i++) {
     var tStop = tStops[i];
@@ -120,7 +124,19 @@ function makeTStopTitles(){
       icon: image,
       title: tStop[0],
     });
-    clickTitle(marker);
+    markerArray.push(marker)
+  }
+}
+
+function clickAbleStops(){
+    for (var i = 0; i < markerArray.length; i++) {
+      markerArray[i].addListener('click', function() {
+      schedule = getSchedule[i];
+      infowindow.setPosition(marker.getPosition());
+      infowindow.setContent("This stop is: " + tStop[0] + ". Here is the upcoming schedule: " + schedule);
+      infowindow.open(map, marker);
+      map.setCenter(marker.getPosition());
+    });
   }
 }
 
@@ -145,7 +161,14 @@ function findClosestStop(){
         title: "Current Location. The closest T Stop to you is: " + tStops[minDistanceStopIndex][0] + ". It is: " + minDistance + " miles away from you right now.",
         map: map
   });
-  clickTitle(me);
+
+  me.addListener('click', function() {
+    infowindow.setPosition(me.getPosition());
+    infowindow.setContent(me.title);
+    infowindow.open(map, me);
+    map.setCenter(me.getPosition());
+  });
+
   return minDistanceStopIndex; 
 }
 
@@ -186,3 +209,25 @@ function linetoNearestStop(stopIndex){
   });
   nearestStop.setMap(map);
 }
+
+
+function getSchedule () {
+  for (var i = 0; i < tStops.length;i++){
+  linkOfRequest = 'https://chicken-of-the-sea.herokuapp.com/redline/schedule.json?stop_id='+tStops[i][3];
+  request = new XMLHttpRequest();
+  request.open("GET", linkOfRequest, true);
+  request.send();
+  request.onreadystatechange = function() {
+    if (request.readyState == 4 && request.status == 200) {
+       data = request.responseText;
+       parsedData = JSON.parse(data);
+        console.log(parsedData)
+    //   markerArray[i].title = parsedData;
+    }
+    else if (request.readyState == 4 && request.status != 200) {
+            alert("something went wrong");
+        }
+    }
+  }
+  }
+ 
