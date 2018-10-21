@@ -2,7 +2,7 @@ var myLat = 0;
 var myLng = 0;
 var closestStopLat = 0;
 var closestStopLng = 0;
-var me = new google.maps.LatLng(myLat, myLng);
+var myMarker = new google.maps.LatLng(myLat, myLng);
 var myOptions = {
   zoom: 13, // The larger the zoom number, the bigger the zoom
   center: {lat: 42.352271, lng: -71.05524200000001},
@@ -37,7 +37,6 @@ var image = {
   scaledSize: new google.maps.Size(25, 25)
 };
 
-
 function init() {
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
@@ -47,19 +46,19 @@ function init() {
       myLng = position.coords.longitude;
       me = new google.maps.LatLng(myLat, myLng);
       map.panTo(me);   
-      marker = new google.maps.Marker({
-        position: me,
-        title: "Here I Am!",
-        map: map
-      });
-    clickTitle(marker);
       renderMap();
-  });
+    },   function() { noGeoLocationError(true);
+    });
   } else {
-    alert("Geolocation is not supported by your web browser.  What a shame!");
+      noGeoLocationError(false);
   }
 }
 
+function noGeoLocationError(status){
+  if (status == true) {
+    alert("Geolocation is not supported by your web browser.  What a shame!");
+  }
+}
 
 function renderMap() {
   drawLine();
@@ -140,6 +139,13 @@ function findClosestStop(){
         minDistance = distanceArray[i-1];
     }
   }
+  
+  me = new google.maps.Marker({
+        position: me,
+        title: "Current Location. The closest T Stop to you is: " + tStops[minDistanceStopIndex][0] + ". It is: " + minDistance + " miles away from you right now.",
+        map: map
+  });
+  clickTitle(me);
   return minDistanceStopIndex; 
 }
 
