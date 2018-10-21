@@ -1,9 +1,11 @@
 var myLat = 0;
 var myLng = 0;
+var closestStopLat = 0;
+var closestStopLng = 0;
 var me = new google.maps.LatLng(myLat, myLng);
 var myOptions = {
   zoom: 13, // The larger the zoom number, the bigger the zoom
-  center: me,
+  center: {lat: 42.352271, lng: -71.05524200000001},
   mapTypeId: google.maps.MapTypeId.ROADMAP
 };
 var map;
@@ -37,55 +39,32 @@ var image = {
 
 
 function init() {
-    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    getMyLocation();
-        // Update map and go there...
-    me = new google.maps.LatLng(myLat, myLng);
-    map.panTo(me);
-        
-    // Create a me marker
-    marker = new google.maps.Marker({
-      position: me,
-      title: "Here I Am!",
-      map: map
-    });
-    clickTitle(marker)
-}
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-function getMyLocation() {
   if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
     navigator.geolocation.getCurrentPosition(function(position) {
       myLat = position.coords.latitude;
       myLng = position.coords.longitude;
+      me = new google.maps.LatLng(myLat, myLng);
+      map.panTo(me);   
+      marker = new google.maps.Marker({
+        position: me,
+        title: "Here I Am!",
+        map: map
+      });
+    clickTitle(marker);
       renderMap();
-    });
-  }
-  else {
+  });
+  } else {
     alert("Geolocation is not supported by your web browser.  What a shame!");
   }
 }
 
+
 function renderMap() {
-  me = new google.maps.LatLng(myLat, myLng);
-
-  // Update map and go there...
-  map.panTo(me);
-  
-  // Create a marker
-  marker = new google.maps.Marker({
-    position: me,
-    title: "Here I Am!"
-  });
-  marker.setMap(map);
-    
-  // Open info window on click of marker
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(marker.title);
-    infowindow.open(map, marker);
-  });
-
   drawLine();
   makeTStopTitles();
+  linetoNearestStop(findClosestStop());
 }
 
 function drawLine() {  
@@ -144,4 +123,60 @@ function makeTStopTitles(){
     });
     clickTitle(marker);
   }
+}
+
+function findClosestStop(){
+  distanceArray = [];
+  for (var i=0; i < tStops.length; i++){
+    var distanceToStop = distBetween(myLat, myLng, tStops[i][1], tStops[i][2])
+    distanceArray.push(distanceToStop)
+  }
+
+  var minDistance = distanceArray[0];
+  var minDistanceStopIndex = 0;
+  for (var i=1; i < tStops.length; i++){
+    if (distanceArray[i] < minDistance) {
+        minDistanceStopIndex = i-1; 
+        minDistance = distanceArray[i-1];
+    }
+  }
+  return minDistanceStopIndex; 
+}
+
+function distBetween(lat1, lon1, lat2, lon2) {
+  //Haversine formula: https://www.movable-type.co.uk/scripts/latlong.html
+  var R = 6378137; 
+  var φ1 = toRadians(lat1);
+  var φ2 = toRadians(lat2);
+  var Δφ = toRadians((lat2-lat1));
+  var Δλ = toRadians((lon2-lon1));
+  var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c;
+  return metersToMiles(d);
+}
+
+function toRadians(x){
+  return x * Math.PI / 180;
+}
+
+function metersToMiles(x){
+  return x * 0.000621371;
+}
+
+function linetoNearestStop(stopIndex){
+  var lineArray = [];
+  position =  {lat: myLat, lng: myLng};
+  lineArray.push(position);
+  position =  {lat: tStops[stopIndex][1], lng: tStops[stopIndex][2]};
+  lineArray.push(position);
+
+  nearestStop = new google.maps.Polyline({
+    path: lineArray,
+    geodesic: true,
+    strokeColor: '#006400',
+    strokeOpacity: 3.0,
+     strokeWeight: 5
+  });
+  nearestStop.setMap(map);
 }
