@@ -42,7 +42,7 @@ function init() {
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
   drawLine();
   makeTStopTitles();
-
+  clickAbleStop();
   if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
     navigator.geolocation.getCurrentPosition(function(position) {
       myLat = position.coords.latitude;
@@ -107,8 +107,10 @@ function drawLine() {
 
 function clickTitle(marker){
     marker.addListener('click', function() {
+
     infowindow.setPosition(marker.getPosition());
-    infowindow.setContent(marker.title);
+    marker.title = 
+  infowindow.setContent(marker.title);
     infowindow.open(map, marker);
     map.setCenter(marker.getPosition());
     });
@@ -128,17 +130,59 @@ function makeTStopTitles(){
   }
 }
 
-function clickAbleStops(){
-    for (var i = 0; i < markerArray.length; i++) {
-      markerArray[i].addListener('click', function() {
-      schedule = getSchedule[i];
-      infowindow.setPosition(marker.getPosition());
-      infowindow.setContent("This stop is: " + tStop[0] + ". Here is the upcoming schedule: " + schedule);
-      infowindow.open(map, marker);
-      map.setCenter(marker.getPosition());
-    });
+
+
+function clickAbleStop(){
+  markerArray[0].addListener('click', function() {
+    marker = markerArray[0];
+        linkOfRequest = 'https://chicken-of-the-sea.herokuapp.com/redline/schedule.json?stop_id='+ tStops[0][3];
+        request = new XMLHttpRequest();
+        request.open("GET", linkOfRequest, true);
+        request.send();
+        request.onreadystatechange = function() {
+      if (request.readyState == 4 && request.status == 200) {
+          var data = request.responseText;
+          var parsed = (JSON.parse(data));
+ 
+
+          var parsedData = parsed.data;
+          console.log (parsedData.length);
+          var scheduleStr="";
+          var pos;
+      for (var i = 0; i<parsedData.length;i++) {
+          var  dir = parsedData[i].attributes.direction_id;
+          var arriveString = parsedData[i].attributes.arrival_time;
+
+          if (dir==1)
+          {
+            direction = "Southbound";
+          }
+          if (dir==0)
+          {
+            direction = "Northbound";
+          }
+          var posSplice = arriveString.indexOf("T");
+          arriveString = arriveString.slice(-(arriveString.length-posSplice-1));
+          arriveString = arriveString.slice(0,arriveString.length-6);
+          scheduleStr =  scheduleStr + "&nbsp" + arriveString + "&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp" + direction + "</br>";
+      }
+       scheduleStr = "<u>Time of Arrival</u> &nbsp &nbsp &nbsp &nbsp <u>Direction</u></br>" + scheduleStr;
+
+          infowindow.setPosition(marker.getPosition());
+          infowindow.setContent("This stop is: <b>" + tStops[0][0] + "</b>. </br> Here is the upcoming schedule: <br> <br>" + scheduleStr);
+          infowindow.open(map, marker);
+          map.setCenter(marker.getPosition());
+        } 
+      else if (request.readyState == 4 && request.status != 200) {
+            alert("Something did not work.");
+      }
+
+    };
+    }
+    );
   }
-}
+
+
 
 function findClosestStop(){
   distanceArray = [];
@@ -211,6 +255,7 @@ function linetoNearestStop(stopIndex){
 }
 
 
+
 function getSchedule () {
   for (var i = 0; i < tStops.length;i++){
   linkOfRequest = 'https://chicken-of-the-sea.herokuapp.com/redline/schedule.json?stop_id='+tStops[i][3];
@@ -221,8 +266,6 @@ function getSchedule () {
     if (request.readyState == 4 && request.status == 200) {
        data = request.responseText;
        parsedData = JSON.parse(data);
-        console.log(parsedData)
-    //   markerArray[i].title = parsedData;
     }
     else if (request.readyState == 4 && request.status != 200) {
             alert("something went wrong");
@@ -230,4 +273,3 @@ function getSchedule () {
     }
   }
   }
- 
