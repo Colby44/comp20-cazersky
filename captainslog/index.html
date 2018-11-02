@@ -8,7 +8,48 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
-        // Your work will be done here...
+        fullString = "";
+        $(document).ready(function(){
+            display();
+        });
+
+
+
+
+        //https://stackoverflow.com/questions/10710674/html5-localstorage-remove-and-clear-all-data
+       // localStorage.clear();
+        //https://howtodoinjava.com/scripting/jquery/jquery-detect-if-enter-key-is-pressed/
+        $(document).ready(function(){
+            $("#msg").keypress(function(event){
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    txt = document.getElementById("msg").value;
+                    //https://stackoverflow.com/questions/7174265/reset-textbox-value-in-javascript
+                    $('#msg').val('');
+                    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+                    timeOfMsg = new Date();
+                    fullString = timeOfMsg + " - " + txt;
+                    localStorage[timeOfMsg.getTime()]=fullString;
+                    display();
+        
+                //    log.innerHTML = log.innerHTML + "<p>" + fullString;
+                };
+            });
+        });
+
+
+        function display() {
+            dataForLog = "";
+            for (var i = localStorage.length-1; i > -1; i--)
+            {
+                console.log(i);
+                dataForLog = dataForLog + "<p>" + localStorage.getItem(localStorage.key(i)) + "</p>\n";
+                console.log(dataForLog);
+            }  
+                        log.innerHTML = dataForLog;
+        }
+      
+
     </script>
 </head>
 
@@ -18,4 +59,3 @@
     <div id="log"></div>
 </body>
 </html>
-Instruction
