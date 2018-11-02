@@ -13,9 +13,6 @@
             display();
         });
 
-
-
-
         //https://stackoverflow.com/questions/10710674/html5-localstorage-remove-and-clear-all-data
        // localStorage.clear();
         //https://howtodoinjava.com/scripting/jquery/jquery-detect-if-enter-key-is-pressed/
@@ -31,8 +28,6 @@
                     fullString = timeOfMsg + " - " + txt;
                     localStorage[timeOfMsg.getTime()]=fullString;
                     display();
-        
-                //    log.innerHTML = log.innerHTML + "<p>" + fullString;
                 };
             });
         });
@@ -42,14 +37,10 @@
             dataForLog = "";
             for (var i = localStorage.length-1; i > -1; i--)
             {
-                console.log(i);
                 dataForLog = dataForLog + "<p>" + localStorage.getItem(localStorage.key(i)) + "</p>\n";
-                console.log(dataForLog);
             }  
-                        log.innerHTML = dataForLog;
+            log.innerHTML = dataForLog;
         }
-      
-
     </script>
 </head>
 
