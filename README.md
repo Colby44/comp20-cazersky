@@ -1,7 +1,15 @@
-Identify what aspects of the work have been correctly implemented and what have not. I believe that all aspects of the work have been correctly implemented.
+What is this purpose of this Git repository? (duh!)
+The purpose of this Git repository was to privately submit code for assignments and labs for Comp20 Web Programming class at Tufts University. 
 
-Identify anyone with whom you have collaborated or discussed the assignment. Ming's example code and discussion with Eric Tolhurst.
+What was your favorite lab or assignment and why?
+My favorite assignment was the mbta station tracking map. It was my first assignment that I really felt a lot of accomplishment completing. I enjoyed using an API for the first time and I also thought that the detailed distance calculation to each station was a good use of math within programming. 
 
-Say approximately how many hours you have spent completing the assignment. 10 hours.
+How much do you think you have grown from day 1 of this course to now?
+I think that I have grown a lot since day 1 in this course. 
 
-Be written in either text format (README.txt) or in Markdown (README.md). Markdown is preferred. No other formats will be accepted. Please use all capital letters for README
+What was the most important thing that you learned in this course? Cite two examples as evidence.
+- How to use APIs to make a website that can actually interact with data sourced from real world applications. 
+- Learning a new programming language Javascript along with using Git for the first time. 
+
+Now that you have finished the course, what topic would you like to delve deeper into?
+I enjoyed using Javascript for the first time and would like to delve deeper into it. 
