@@ -1,0 +1,26 @@
+body {
+	font-family:"Times New Roman", Arial, sans-serif;
+	color: black;
+}
+
+p {
+	font-size: 16px;
+	color: black;
+}
+
+h1 {
+	color: black;
+	text-align: center;
+	font-size: 30px;
+}
+
+h2 {
+	color: black;
+	text-align: left;
+	font-size: 22px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+
+

@@ -1,37 +1,96 @@
-Assignment 4: Security and Privacy Assessment of Assignment 3
-Due: Tuesday, December 4th
-Colby Azersky
+<!DOCTYPE html>
+<html>
 
-Introduction - Provide a description of the product and what you were hired to do
+<head>
+	<title> Assignment 4 </title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
 
-  The product in this assignment is the submitted assignment 3 of a peer, Janna Sokolow. This assignment was a modified client-side 2048 game coupled with a server-side game center highscore tracker. There are several security and privacy vulnerabilities in this code and I was hired to document and resolve these issues. 
+</head>
+
+<body>
+
+	<h1> Assignment 4: Security and Privacy Assessment of Assignment 3 </h1>
+	<br></br>
+	<h2> Introduction </h2>
+	<div>  The product in this assignment is the submitted assignment 3 of a peer, Janna Sokolow. This assignment was a modified client-side 2048 game coupled with a server-side game center highscore tracker. There are several security and privacy vulnerabilities in this code and I was hired to document and resolve these issues. </div>
+	<br></br>
+	<h2> Methodology </h2>
+	<div> During this assessment, I used various inputs to attempt to expose potential security and privacy vulnerabilities, including unrestricted database access and cross-site scripting (XSS). To do this, I used my browser and the cURL tool.  </div>
+	<br></br>
+	<h2> Abstract of Findings </h2>
+	<div> During this security investigation, several flaws were revealed which gave the user access to information that they should not have. These flaws include cross site scripting, query injections, and hard coded database credentials. </div>
+
+	<br></br>
+	<h2> Issues Found </h2>
+
+	<br></br>
+	<li> <b> Issue 1: </b> </li>
+	<div> Query Injection </div>
+	<li> <b> Location: </b> </li>
+	<div> server.js -> /scores.json line 121  </div>
+	<li> <b> Severity: </b> </li>
+	<div> <b>Low:</b>    I would argue that this threat isn't much of an issue right now because the hacker is able to access other scores and items in the database which usually could be seen anyway on the highscores. HOWEVER, this issue could become <b>medium or large</b> if there is sensitive information added in the database. </div>
+	<li> <b> Description </b> </li>
+	<div> This issue can be exposed simply using the browser. By going to : 
+		"https://gameserver2048.herokuapp.com/scores.json?username[$ne]=ANY" on a browser, all of the elements within the database that are not "ANY" will be shown to to the user. 
+	</div>
+	<li> <b> Proof of Vulnerability </b> </li>
+	<div> <br><img src="issue1.png" alt="Issue 1"> </div>
+	<div> Once this specific address is accessed, you can see data on the page that the user should not have access to.</div>
+	<li> <b> Resolution </b> </li>
+	<div> You can use more strict input validation to ensure that the users query will not grant the user this access. For example, a validation library could be used tso that <a href="https://blog.sqreen.io/prevent-nosql-injections-mongodb-node-js/">Source</a> </div>
+	<br></br>	
 
 
-Methodology - Describe your methodology pen testing the application, including the tools that you used
-  a
 
-Abstract of Findings - Provide an overview of all the security and privacy issues you identified. This section should be written for non-technical managers who do not have technical expertise and do not have time to read the entire document. Write this section using lay language.
-
-  aa
-
-
-ISSUE #1: Cross Site Scripting (XSS)
-ISSUE #2: MONGO DB Key Hard Coded In
-ISSUE #3: Spam possibility of DB 
-
-Issues Found - For each issue that you find, document:
-Issue (e.g., database injection, really bad programming practice)
-Location or page where issue was found
-Severity of issue (e.g., low, medium , or high). Justify your answer.
-Description of issue. How did you find it? A screenshot of problem is excellent.
-Proof of vulnerability. Show pictures or it didn't happen.
-Resolution. Make recommendation(s) on how issue can be resolved. Show code if possible.
-
+	<br></br>
+	<li> <b> Issue 2: </b> </li>
+	<div> Hard-Coded Credentials </div>
+	<li> <b> Location: </b> </li>
+	<div> server.js -> ~line 14 </div>
+	<li> <b> Severity: </b> </li>
+	<div> <b>Medium:</b> While this information should usually be hidden, if the source code is accessed by a third party, they now have access to all of the database. </div>
+	<li> <b> Description </b> </li>
+	<div> While observing the source code, I found that the mongo login credientials are written into the first lines of the code.
+	</div>
+	<li> <b> Proof of Vulnerability </b> </li>
+	<div> <br><img src="hardcoded.png" alt="Issue 1"> </div>
+	<li> <b> Resolution </b> </li>
+	<div> Currently, on line 14, you have process.env.MONGOB_URI "OR" your credientials. Instead, remove the credientials and remain logged in so the first part of that line works. </div>
+	</ul>
+	</li>
+	<br></br>	<br></br>
 
 
-Conclusion - You can also list future considerations and recommendations with costs.
-  a
+
+	<br></br>
+	<li> <b> Issue 3: </b> </li>
+	<div> Cross-Site Scripting (XSS) </div>
+	<li> <b> Location: </b> </li>
+	<div> server.js -> line 22  </div>
+	<li> <b> Severity: </b> </li>
+	<div> <b>High:</b>  
+	supposed to. </div>
+	<li> <b> Description </b> </li>
+	<div> 
+		This issue is arises from enabling universal CORS access by using "*". This is a serious threat because it allows any site to access  This is due to giving permission to access selected resources from a server at a different origin.
+
+	</div>
+	<li> <b> Proof of Vulnerability </b> </li>
+	<div> <br><img src="cors.png" alt="Issue 1"> </div>
+	<li> <b> Resolution </b> </li>
+	<div> Either reconfigure the program so that information between sites is either not exchanged or safely transferred OR enable cross origin for the specific sites that should be sharing resources</div>
+	</ul>
+	</li>
+	<br></br>	<br></br>
 
 
-References - A list of references and links that you used for your work.
-  a
+	<h2> Conclusion </h2>
+	<div> The issues present in this application primarily pertain to the user having the ability to access restricted data within the database. Please use my suggestions to enhance the security of the database. Also, another large issue is the cross-site-scripting which can be resolved by restricting the sites that are able to share resources.  </div>
+
+	<h2> References </h2>
+	<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"> CORS Reference</a> <br>
+	<a href="https://curl.haxx.se/"> Curl Reference</a> <br>
+	<div> Piazza was helpful as well as in class comp20 examples.</div>
+</body>
+</html>
